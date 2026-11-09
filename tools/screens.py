@@ -6,10 +6,18 @@ from urllib.parse import urlparse
 from playwright.sync_api import sync_playwright
 
 urls = [u.strip() for u in sys.argv[1].split(',') if u.strip()]
+# indirizzo con #ancora: foto solo della parte visibile in quel punto (per controllare una sezione)
+SCROLL_TO = True
 out = Path('screens'); out.mkdir(exist_ok=True)
 
 def shoot(page, url, path):
     page.goto(url, wait_until='networkidle', timeout=60000)
+    if '#' in url:
+        time.sleep(2.5)
+        page.evaluate("document.querySelector(location.hash) && document.querySelector(location.hash).scrollIntoView()")
+        time.sleep(3)
+        page.screenshot(path=str(path), full_page=False, type='jpeg', quality=85)
+        return
     # chiude i banner dei cookie (Accetta / Accetto / Accept / OK)
     for label in ['Accetta', 'Accetto', 'Accetta tutti', 'Accept', 'Accept all', 'OK', 'Ho capito']:
         try:
@@ -34,7 +42,7 @@ with sync_playwright() as p:
     b = p.chromium.launch()
     for u in urls:
         if not u.startswith('http'): u = 'https://' + u
-        host = urlparse(u).hostname
+        host = urlparse(u).hostname + ('-' + urlparse(u).fragment if urlparse(u).fragment else '')
         try:
             d = b.new_page(viewport={'width': 1440, 'height': 900}, device_scale_factor=1)
             shoot(d, u, out / f'{host}.jpg'); d.close()
