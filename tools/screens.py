@@ -10,11 +10,24 @@ out = Path('screens'); out.mkdir(exist_ok=True)
 
 def shoot(page, url, path):
     page.goto(url, wait_until='networkidle', timeout=60000)
+    # chiude i banner dei cookie (Accetta / Accetto / Accept / OK)
+    for label in ['Accetta', 'Accetto', 'Accetta tutti', 'Accept', 'Accept all', 'OK', 'Ho capito']:
+        try:
+            btn = page.get_by_role('button', name=label, exact=True)
+            if btn.count() > 0 and btn.first.is_visible():
+                btn.first.click(timeout=2000); time.sleep(0.8); break
+        except Exception:
+            pass
     # scorre fino in fondo per caricare le immagini "lazy", poi torna su
     h = page.evaluate('document.body.scrollHeight')
     for y in range(0, h, 600):
-        page.evaluate(f'window.scrollTo(0,{y})'); time.sleep(0.15)
-    page.evaluate('window.scrollTo(0,0)'); time.sleep(1.5)
+        page.evaluate(f'window.scrollTo(0,{y})'); time.sleep(0.35)
+    page.evaluate('window.scrollTo(0,0)')
+    try:
+        page.wait_for_load_state('networkidle', timeout=15000)
+    except Exception:
+        pass
+    time.sleep(3)
     page.screenshot(path=str(path), full_page=True, type='jpeg', quality=82)
 
 with sync_playwright() as p:
