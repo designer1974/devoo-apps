@@ -1,0 +1,33 @@
+name: Screenshot dei siti
+
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: 'Siti separati da virgola'
+        default: 'furgone.devoo.it,bc.attivitapro.it,hairestylist.it'
+
+permissions:
+  contents: write
+
+jobs:
+  shoot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Browser
+        run: |
+          pip install playwright==1.48.0
+          python -m playwright install --with-deps chromium
+      - name: Screenshot
+        run: python tools/screens.py "${{ github.event.inputs.urls }}"
+      - name: Salva nel repository (indirizzi fissi per devoo.it)
+        run: |
+          git config user.name designer1974
+          git config user.email rachidmarchoud@gmail.com
+          git add screens
+          git commit -m "Screenshot aggiornati: ${{ github.event.inputs.urls }}" || echo "niente di nuovo"
+          git push
