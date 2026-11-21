@@ -1,0 +1,39 @@
+name: Scarica pagine (codice)
+
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: 'Indirizzi separati da spazio'
+        default: 'https://bc.attivitapro.it/ https://br.attivitapro.it/'
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Scarica
+        run: |
+          mkdir -p fetched
+          for u in ${{ github.event.inputs.urls }}; do
+            n=$(echo "$u" | sed -E 's#https?://##; s#[^A-Za-z0-9.]+#_#g')
+            curl -sSL -A "Mozilla/5.0 (Linux; Android 14) Chrome/130 Mobile" -o "fetched/$n.html" "$u" || true
+            base=$(echo "$u" | sed -E 's#(https?://[^/]+).*#\1#')
+            grep -oE '(src|href)="[^"]+\.(js|css)[^"]*"' "fetched/$n.html" | sed -E 's/^(src|href)="//; s/"$//' | sort -u | while read -r f; do
+              case "$f" in http*) full="$f";; //*) full="https:$f";; /*) full="$base$f";; *) full="$base/$f";; esac
+              case "$full" in *googleapis*|*gstatic*|*cdn*) continue;; esac
+              fn=$(echo "$full" | sed -E 's#https?://##; s#[?].*##; s#[^A-Za-z0-9.]+#_#g')
+              curl -sSL -o "fetched/$fn" "$full" || true
+            done
+          done
+          ls -la fetched
+      - name: Salva
+        run: |
+          git config user.name designer1974
+          git config user.email designer1974@users.noreply.github.com
+          git add fetched
+          git commit -m "Pagine scaricate" || echo "niente di nuovo"
+          git push
