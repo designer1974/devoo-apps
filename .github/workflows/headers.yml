@@ -1,0 +1,19 @@
+name: Intestazioni siti
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        default: 'https://bc.attivitapro.it/ https://br.attivitapro.it/'
+permissions:
+  contents: write
+jobs:
+  h:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - run: |
+          mkdir -p fetched
+          for u in ${{ github.event.inputs.urls }}; do echo "== $u"; curl -sSI -L "$u"; done > fetched/headers.txt
+          git config user.name designer1974
+          git config user.email designer1974@users.noreply.github.com
+          git add fetched && git commit -m "Intestazioni" && git push
