@@ -1,30 +1,16 @@
-== https://bc.attivitapro.it/
-HTTP/2 200 
-date: Sat, 21 Nov 2026 20:58:17 GMT
-content-type: text/html; charset=UTF-8
-vary: Accept-Encoding
-x-powered-by: PHP/8.3.37
-platform: hostinger
-panel: hpanel
-content-security-policy: upgrade-insecure-requests
-server: hcdn
-alt-svc: h3=":443"; ma=86400
-x-hcdn-request-id: 0e33f5b4a72fc8abf07c839bab62012c-imm-edge9
-x-hcdn-cache-status: DYNAMIC
-x-hcdn-upstream-rt: 0.141
+== https://devoo.it/demo/?s=br
+HTTP/1.1 200 OK
+Server: nginx/1.18.0 (Ubuntu)
+Date: Sat, 21 Nov 2026 21:01:46 GMT
+Content-Type: text/html; charset=UTF-8
+Connection: keep-alive
+Cache-Control: public, max-age=300
 
-== https://br.attivitapro.it/
-HTTP/2 200 
-date: Sat, 21 Nov 2026 20:58:18 GMT
-content-type: text/html; charset=UTF-8
-vary: Accept-Encoding
-x-powered-by: PHP/8.3.37
-platform: hostinger
-panel: hpanel
-content-security-policy: upgrade-insecure-requests
-server: hcdn
-alt-svc: h3=":443"; ma=86400
-x-hcdn-request-id: 5f5ca11f8a7632bf8d41970c427df086-imm-edge7
-x-hcdn-cache-status: DYNAMIC
-x-hcdn-upstream-rt: 0.138
+== https://devoo.it/demo/?s=bc
+HTTP/1.1 200 OK
+Server: nginx/1.18.0 (Ubuntu)
+Date: Sat, 21 Nov 2026 21:01:47 GMT
+Content-Type: text/html; charset=UTF-8
+Connection: keep-alive
+Cache-Control: public, max-age=300
 
